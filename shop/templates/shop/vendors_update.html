@@ -1,0 +1,16 @@
+{% extends 'shop/base/base.html' %}
+{% load static %}
+
+{% block css_files %}
+  <link rel="stylesheet" href="{% static 'shop/items.css' %}" />
+{% endblock %}
+
+{% block content %}
+<section id="comment-form">
+<form action="" method="POST">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-outline-primary" value="Update">Update</button>
+  </form>
+  </section>
+{% endblock %}

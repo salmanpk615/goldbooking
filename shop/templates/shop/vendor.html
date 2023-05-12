@@ -19,7 +19,11 @@
         <th scope="col">Email</th>
         <th scope="col">Items</th>
         <th scope="col">Company</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Delete</th>
       </tr>
+      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="
+      margin-left: 73.5rem;">Add Vendor</button>
     </thead>
     <tbody>
       {% for vendor in vendors %}
@@ -29,8 +33,41 @@
           <td>{{ vendor.email }}</td>
           <td>{{ vendor.items }}</td>
           <td>{{ vendor.company }}</td>
+          <td><a class="js-edit btn btn-sm btn-primary" href="{% url 'vendor_update' vendor.id %}">Edit</a></td>
+          {% comment %} <td><a class="js-edit btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editform"
+            data-url="">Edit</a> {% endcomment %}
+          <td><a class="js-edit btn btn-sm btn-danger" href="{% url 'vendor_delete' vendor.id %}">Delete</a></td>
+     </td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
+<!-- Add Vendor Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Vendors</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="add" action="{% url 'vendors' %}" method="POST">
+          {% csrf_token %}
+          {% for form in vendor_form %}
+          <div class="form-control {% if form.errors %}invalid{% endif %}">
+              {{ form.label_tag }}
+              {{ form }}
+              {{ form.errors }}
+          </div>
+          {% endfor %}
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="margin-left: 11rem">Close</button>
+            <button type="submit" class="btn btn-outline-primary" value="save">Save</button>
+            </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

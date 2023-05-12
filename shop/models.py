@@ -8,12 +8,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 class User(AbstractUser):
-    name = models.CharField(max_length=45)
-    email = models.EmailField(unique=True)
     phone = models.CharField(max_length=15)
-
-    def __str__(self):
-        return self.name
 
     class Meta:
         verbose_name = 'User'
@@ -64,6 +59,8 @@ class Items(models.Model):
     fine = models.CharField(max_length=5)
     amount = models.CharField(max_length=10) 
     type = models.ForeignKey(Types, on_delete=models.CASCADE)
+    qr_code = models.ImageField(upload_to='qr_codes', blank=True)
+
 
     def __str__(self):
         return str(self.type)
@@ -129,8 +126,7 @@ class Reports(models.Model):
     vendor = models.ForeignKey(Vendors, on_delete=models.CASCADE)
     stockin = models.ForeignKey(StockIn, on_delete=models.CASCADE)
     stockout = models.ForeignKey(StockOut, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    
     def __str__(self):
         return str(self.items)
 

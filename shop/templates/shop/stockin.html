@@ -1,4 +1,6 @@
 {% extends 'shop/base/base.html' %}
+
+
 {% load static %}
 
 {% block title %}
@@ -16,16 +18,57 @@
       <tr>
         <th scope="col">Vendor</th>
         <th scope="col">Items</th>
+        <th scope="col">Edit</th>
+        <th scope="col">Delete</th>
+        <th scope="col">Print</th>
         
       </tr>
+       <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="
+      margin-left: 73rem;">Add Stockin</button>
     </thead>
     <tbody>
       {% for stock in stockin %}
         <tr>
           <td>{{ stock.vendor }}</td>
           <td><a href={% url "items" %}>{{ stock.items }}</a></td>
+          <td><a class="js-edit btn btn-sm btn-primary" href="{% url 'stockin_update' stock.id %}">Edit</a></td>
+          {% comment %} <td><a class="js-edit btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editform"
+            data-url="">Edit</a></td> {% endcomment %}
+          <td><a class="js-edit btn btn-sm btn-danger" href="{% url 'stockin_delete' stock.id %}">Delete</a></td>
+          <td><a href="{% url 'slip' stock.id %}">Print Slip</a></td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
+
+
+<!-- Add StockIn Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Add Stockin</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <section id="comment-form">
+          <form id="add" action="{% url 'stockin' %}" method="POST">
+            {% csrf_token %}
+            {% for form in stockin_form %}
+            <div class="form-control {% if form.errors %}invalid{% endif %}">
+                {{ form.label_tag }}
+                {{ form }}
+                {{ form.errors }}
+            </div>
+            {% endfor %}
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" style="margin-left: 11rem">Close</button>
+            <button type="submit" class="btn btn-outline-primary" value="save">Save</button>
+            </form>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 {% endblock %}
