@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from typing import Any, Dict, Optional
 from django.db import models
 from django.http import HttpResponseRedirect, JsonResponse
@@ -5,33 +6,28 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
+# from reportlab.pdfgen import canvas
 
 from django.views.generic import View
-
-
 
 from django.template.loader import render_to_string
 
 import qrcode
 from django.core.files.base import ContentFile
 
-
 from weasyprint import HTML
 
 from io import BytesIO
 from django.http import HttpResponse
 
-
-
-
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.views.generic import TemplateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView, FormView
-from .forms import ItemForm, ItemUpdateForm, VendorForm, StockinForm, StockoutForm, ReportForm, ReportUpdateForm, StockinUpdate, StockoutUpdate, VendorUpdateForm, UserCreationForm
+from .forms import ItemForm, ItemUpdateForm, VendorForm, StockinForm, StockoutForm, ReportForm, ReportUpdateForm, \
+    StockinUpdate, StockoutUpdate, VendorUpdateForm, UserCreationForm
 
-from .models import Items, Vendors, StockIn, StockOut, Reports
+from .models import Items, Vendors, StockIn, StockOut, Reports, User, Types
 
 
 # Create your views here.
@@ -44,15 +40,14 @@ class SignUpView(CreateView):
     form_class = UserCreationForm
     success_url = "shop/login/"
     template_name = "shop/registration/signup.html"
-    
 
-class ItemsView(ListView, FormView):
+
+class ItemsView(LoginRequiredMixin, ListView, FormView):
     model = Items
     template_name = "shop/items.html"
     context_object_name = "items"
     form_class = ItemForm
     success_url = "/shop/items"
-
 
     def form_valid(self, form):
         qr = qrcode.QRCode(
@@ -63,36 +58,48 @@ class ItemsView(ListView, FormView):
         qr.add_data(form.instance.qr_code)
         qr.make(fit=True)
         img = qr.make_image(fill_color="black", back_color="white")
-        
+
         # Save the QR code image to the model instance
         img_io = BytesIO()
         img.save(img_io, format='PNG')
         img_file = ContentFile(img_io.getvalue(), f'{form.instance.qr_code}.png')
         form.instance.qr_code.save(f'{form.instance.qr_code}.png', img_file)
         # form.save()
-        return super().form_valid(form)  
+        return super().form_valid(form)
 
+    # def form_invalid(self, form):
+    #     for field in form.errors:
+    #         form.fields[field].widget.attrs["class"] = "error"
+    #     return super().form_invalid(form)
+
+    def form_invalid(self, form):
+        return JsonResponse({"errors": dict(form.errors)}, status=400)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["item_form"] = ItemForm()
-        return context    
-    
-    
+        return context
+
+    #     def get_queryset(self):
+    #     queryset =  super().get_queryset()
+    #     data = Items.objects.filter(user=self.request.user)
+    #     return data
+
+
 class ItemDelete(DeleteView):
     model = Items
     template_name = "shop/item_delete.html"
     success_url = "/shop/items"
-    
-    
+
+
 class ItemEdit(UpdateView):
     model = Items
     form_class = ItemUpdateForm
     template_name = "shop/item_update.html"
-    success_url = "/shop/items"  
+    success_url = "/shop/items"
 
 
-class VendorsView(ListView, FormView):
+class VendorsView(LoginRequiredMixin, ListView, FormView):
     model = Vendors
     template_name = "shop/vendor.html"
     context_object_name = "vendors"
@@ -101,21 +108,26 @@ class VendorsView(ListView, FormView):
 
     def form_valid(self, form):
         form.save()
-        return super().form_valid(form)  
+        return super().form_valid(form)
 
+    def form_invalid(self, form):
+        form.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return JsonResponse({"errors": dict(form.errors)}, status=400)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["vendor_form"] = VendorForm()
         return context
-   
+
 
 class VendorEdit(UpdateView):
     model = Vendors
     form_class = VendorUpdateForm
     template_name = "shop/vendors_update.html"
-    success_url = "/shop/vendors" 
-
+    success_url = "/shop/vendors"
 
 
 class VendorDelete(DeleteView):
@@ -124,7 +136,7 @@ class VendorDelete(DeleteView):
     success_url = "/shop/vendors"
 
 
-class StockinView(ListView, FormView):
+class StockinView(LoginRequiredMixin, ListView, FormView):
     model = StockIn
     template_name = "shop/stockin.html"
     context_object_name = "stockin"
@@ -133,29 +145,29 @@ class StockinView(ListView, FormView):
 
     def form_valid(self, form):
         form.save()
-        return super().form_valid(form)  
+        return super().form_valid(form)
 
+    def form_invalid(self, form):
+        return JsonResponse({"errors": dict(form.errors)}, status=400)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["stockin_form"] = StockinForm()
         return context
-    
-    
+
+
 def slip_view(request, pk):
-	items = StockIn.objects.filter(pk=pk)
-	return render(request, 'shop/slipin.html', {
+    items = StockIn.objects.filter(pk=pk)
+    return render(request, 'shop/slipin.html', {
         'items': items,
-        })
-    
+    })
+
 
 class StockinEdit(UpdateView):
     model = StockIn
     form_class = StockinUpdate
     template_name = "shop/stockin_update.html"
-    success_url = "/shop/stockin" 
-
-
+    success_url = "/shop/stockin"
 
 
 class StockinDelete(DeleteView):
@@ -164,8 +176,7 @@ class StockinDelete(DeleteView):
     success_url = "/shop/stockin"
 
 
-
-class StockOutView(ListView, FormView):
+class StockOutView(LoginRequiredMixin, ListView, FormView):
     model = StockOut
     template_name = "shop/stockout.html"
     context_object_name = "stockout"
@@ -174,8 +185,10 @@ class StockOutView(ListView, FormView):
 
     def form_valid(self, form):
         form.save()
-        return super().form_valid(form)  
+        return super().form_valid(form)
 
+    def form_invalid(self, form):
+        return JsonResponse({"errors": dict(form.errors)}, status=400)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -184,16 +197,17 @@ class StockOutView(ListView, FormView):
 
 
 def slip_out(request, pk):
-	items = StockOut.objects.filter(pk=pk)
-	return render(request, 'shop/slipout.html', {
+    items = StockOut.objects.filter(pk=pk)
+    return render(request, 'shop/slipout.html', {
         'items': items,
-        })
+    })
+
 
 class StockOutEdit(UpdateView):
     model = StockOut
     form_class = StockoutUpdate
     template_name = "shop/stock_update.html"
-    success_url = "/shop/stockout" 
+    success_url = "/shop/stockout"
 
 
 class StockoutDelete(DeleteView):
@@ -202,26 +216,27 @@ class StockoutDelete(DeleteView):
     success_url = "/shop/stockout"
 
 
-class ReportsView(ListView, FormView):
+class ReportsView(LoginRequiredMixin, ListView, FormView):
     model = Reports
     template_name = "shop/reports.html"
     context_object_name = "reports"
     form_class = ReportForm
     success_url = "/shop/reports"
 
-
     def form_valid(self, form):
         form.save()
-        return super().form_valid(form)  
+        return super().form_valid(form)
 
+    def form_invalid(self, form):
+        return JsonResponse({"errors": dict(form.errors)}, status=400)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["item_form"] = ReportForm()
         return context
-    
 
-def pdf_view(request, pk): 
+
+def pdf_view(request, pk):
     items = Reports.objects.filter(pk=pk)
     html_string = render(request, 'shop/pdf.html', {'items': items}).content.decode('utf-8')
     pdf_file = HTML(string=html_string).write_pdf()
@@ -234,11 +249,30 @@ class ReportDelete(DeleteView):
     model = Reports
     template_name = "shop/report_delete.html"
     success_url = "/shop/reports"
-    
-    
+
+
 class ReportEdit(UpdateView):
     model = Reports
     form_class = ReportUpdateForm
     template_name = "shop/report_update.html"
     success_url = "/shop/reports"
 
+
+class DetailView(DetailView):
+    model = Vendors
+    template_name = "shop/detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['items'] = Items.objects.filter(vendor=self.object)
+        return context
+
+
+class ItemDetailView(DetailView):
+    model = Types
+    template_name = "shop/item_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['item'] = Items.objects.filter(type=self.object)
+        return context

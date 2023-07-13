@@ -4,7 +4,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
-
 # Create your models here.
 
 class User(AbstractUser):
@@ -14,14 +13,13 @@ class User(AbstractUser):
         verbose_name = 'User'
 
 
-
 class UsersRole(models.Model):
     S_CHOICES = (
         ('Gold', 'Gold'),
         ('Silver', 'Silver'),
         ('Diamond', 'Diamond')
     )
-    
+
     designation = models.CharField(max_length=45)
     account = models.CharField(max_length=45)
     billing = models.CharField(max_length=10)
@@ -34,6 +32,33 @@ class UsersRole(models.Model):
     class Meta:
         verbose_name = 'UsersRole'
         verbose_name_plural = 'UserRole'
+
+
+class Company(models.Model):
+    brand_name = models.CharField(max_length=45)
+    address = models.CharField(max_length=150)
+    phone = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.brand_name
+
+    class Meta:
+        verbose_name = 'Company'
+        verbose_name_plural = 'Company'
+
+
+class Vendors(models.Model):
+    name = models.CharField(max_length=45)
+    address = models.CharField(max_length=150)
+    email = models.EmailField(unique=True)
+    # items = models.ForeignKey(Items, on_delete=models.CASCADE)
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Vendor'
 
 
 class Types(models.Model):
@@ -52,51 +77,24 @@ class Types(models.Model):
 
 
 class Items(models.Model):
+    name = models.CharField(max_length=45)
     gross_weight = models.CharField(max_length=5)
     net_weight = models.CharField(max_length=5)
     labour_wastage = models.CharField(max_length=5)
     purity = models.CharField(max_length=5)
     fine = models.CharField(max_length=5)
-    amount = models.CharField(max_length=10) 
+    amount = models.CharField(max_length=10)
     type = models.ForeignKey(Types, on_delete=models.CASCADE)
     qr_code = models.ImageField(upload_to='qr_codes', blank=True)
-
+    vendor = models.ForeignKey(Vendors, on_delete=models.CASCADE)
 
     def __str__(self):
-        return str(self.type)
+        return str(self.name)
 
     class Meta:
         verbose_name = 'Item'
 
 
-class Company(models.Model):
-    brand_name = models.CharField(max_length=45)
-    address = models.CharField(max_length=150)
-    phone = models.CharField(max_length=15)
-
-    def __str__(self):
-        return self.brand_name
-    
-    class Meta:
-        verbose_name = 'Company'
-        verbose_name_plural = 'Company'
-        
-
-class Vendors(models.Model):
-    name = models.CharField(max_length=45)
-    address = models.CharField(max_length=150)
-    email = models.EmailField(unique=True)
-    items = models.ForeignKey(Items, on_delete=models.CASCADE)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-    
-
-    class Meta:
-        verbose_name = 'Vendor'
-
-    
 class StockIn(models.Model):
     items = models.ForeignKey(Items, on_delete=models.CASCADE)
     vendor = models.ForeignKey(Vendors, on_delete=models.CASCADE)
@@ -126,12 +124,13 @@ class Reports(models.Model):
     vendor = models.ForeignKey(Vendors, on_delete=models.CASCADE)
     stockin = models.ForeignKey(StockIn, on_delete=models.CASCADE)
     stockout = models.ForeignKey(StockOut, on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return str(self.items)
 
     class Meta:
         verbose_name = 'Report'
+
 
 class Booking(models.Model):
     price = models.CharField(max_length=10)
@@ -139,7 +138,7 @@ class Booking(models.Model):
 
     def __str__(self):
         return str(self.items)
-    
+
     class Meta:
         verbose_name = 'Booking'
         verbose_name_plural = 'Booking'

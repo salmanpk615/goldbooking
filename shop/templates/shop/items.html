@@ -10,8 +10,8 @@
 {% endblock %}
 
 {% block content %}
-  <h3 class="text-center">Items In this Store</h3>
-  <table class="table center w-50">
+  <h1 class="head">Items In this Store</h1>
+  <table class="table w-50">
     <thead class="table-dark">
       <tr>
         <th scope="col">Type</th>
@@ -21,15 +21,14 @@
         <th scope="col">Qr Code</th>
         <th scope="col">Edit</th>
         <th scope="col">Delete</th>
-        
+        <th scope="col"><button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#exampleModal">Add Item</button></th>
       </tr>
-      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="
-      margin-left: 74.5rem;">Add Item</button>
+      
     </thead>
     <tbody>
       {% for item in items %}
         <tr>
-          <td>{{ item.type }}</td>
+          <td><a href="{% url "item_detail" item.id %}">{{ item.type }}</a></td>
           <td>{{ item.amount }}</td>
           <td>{{ item.fine }}</td>
           <td>{{ item.purity }}</td>
@@ -37,8 +36,7 @@
           <td><img src="{{ item.qr_code.url}}"  alt="{{ item.qr_code }}" style="width:50px;height:30px;"></td>
           {% endif %}
 
-          <td><a class="js-edit btn btn-sm btn-primary" href="{% url 'item_update' item.id %}">Edit</a></td>
-          {% comment %} <td><a class="js-edit btn btn-sm btn-primary"  href="{% url 'item_update' item.id %}"  data-bs-toggle="modal" data-bs-target="#editform">Edit</a> {% endcomment %}
+      <td><a class="js-edit btn btn-sm btn-primary" href="{% url 'item_update' item.id %}">Edit</a></td>
      <td><a class="js-edit btn btn-sm btn-danger" href="{% url 'item_delete' item.id %}">Delete</a></td>
         </tr>
       {% endfor %}
@@ -54,7 +52,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <form id="add" action="{% url 'items' %}" method="POST">
+          <form id="my-form" action="{% url 'items' %}" method="POST" novalidate>
             {% csrf_token %}
             {% for form in item_form %}
             <div class="form-control {% if form.errors %}invalid{% endif %}">
@@ -74,6 +72,57 @@
   </div>
 </div>
 
+{% endblock %}
+
+
+{% block script %}
+
+<script>
+  $(document).on('hidden.bs.modal', function () {
+    $('.editPassenger').modal('hide')
+    $('#my-form').trigger('reset')
+    $('div .field_error').remove()
+    $('.form-control').removeClass('is-invalid')
+})
+
+  $(function() {
+    $(document).on('submit','#my-form',function(event) {
+      event.preventDefault();  // Prevent the form from submitting normally
+     
+    
+      // Send an AJAX request to the server
+      $.ajax({
+        type: 'POST',
+        url: '{% url "items" %}',  // Replace with the actual URL of your Django view
+        data: $(this).serialize(),  // Serialize the form data
+        beforeSend: function(){
+        },
+        success: function(response) {
+          window.location.reload()
+        }, error: function(error){
+          if(error.status === 400){
+            console.log(error)
+            $.each(error.responseJSON.errors, function (key, value) {
+              var name = $(`[name=${key}]`)
+              var fielderror = value[0]
+              if ( name.parent().children("div").is( ".field_error" )) {
+                  return false;
+              }else{
+                  name.parent().children(':text, input[type=number], #id_type, #id_vendor').addClass('is-invalid').parent().append(`<div class='text-danger field_error '>* ${fielderror}</div>`);                
+              }
+            });
+          }
+         
+        }
+      });
+    });
+  });
+
+</script>
 
 
 {% endblock %}
+
+console.log(error.responseJSON.errors) 
+ var form = $(this)
+      var url = '{% url 'items' %}'

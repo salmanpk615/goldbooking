@@ -6,12 +6,12 @@
 {% endblock %}
 
 {% block css_files %}
-  <link rel="stylesheet" href="{% static 'shop/reports.css' %}" />
+  <link rel="stylesheet" href="{% static 'shop/items.css' %}" />
 {% endblock %}
 
 {% block content %}
-  <h3 class="text-center">Reports of this Store</h3>
-  <table class="table center w-50">
+  <h1 class="head">Reports of this Store</h1>
+  <table class="table w-50">
     <thead class="table-dark">
       <tr>
         <th scope="col">Vendor</th>
@@ -21,10 +21,10 @@
         <th scope="col">Edit</th>
         <th scope="col">Delete</th>
         <th scope="col">Pdf</th>
+        <th scope="col"><button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#exampleModal">Add</button></th>
         
       </tr>
-      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="
-      margin-left: 73rem;">Add Report</button>
+    
     </thead>
     <tbody>
       {% for report in reports %}
@@ -33,11 +33,9 @@
           <td>{{ report.items }}</td>
           <td>{{ report.stockin }}</td>
           <td>{{ report.stockout }}</td>
-
-          <td><a class="js-edit btn btn-sm btn-primary" href="{% url 'report_update' report.id %}">Edit</a></td>
-          {% comment %} <td><a class="js-edit btn btn-sm btn-primary"  href="{% url 'item_update' item.id %}"  data-bs-toggle="modal" data-bs-target="#editform">Edit</a> {% endcomment %}
+        <td><a class="js-edit btn btn-sm btn-primary" href="{% url 'report_update' report.id %}">Edit</a></td>
      <td><a class="js-edit btn btn-sm btn-danger" href="{% url 'report_delete' report.id %}">Delete</a></td>
-     <td><a class="js-edit btn btn-sm btn-danger" href="{% url 'pdf' report.id %}">Generate Pdf</a></td>
+     <td><a class="js-edit btn btn-sm btn-danger" href="{% url 'pdf' report.id %}">Pdf</a></td>
         </tr>
       {% endfor %}
     </tbody>
@@ -52,7 +50,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-          <form id="add" action="{% url 'reports' %}" method="POST">
+          <form id="my-form" action="{% url 'reports' %}" method="POST" novalidate>
             {% csrf_token %}
             {% for form in item_form %}
             <div class="form-control {% if form.errors %}invalid{% endif %}">
@@ -68,4 +66,50 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block script %}
+
+<script>
+  $(document).on('hidden.bs.modal', function () {
+    $('.editPassenger').modal('hide')
+    $('#my-form').trigger('reset')
+    $('div .field_error').remove()
+    $('.form-control').removeClass('is-invalid')
+})
+
+  $(function() {
+    $(document).on('submit','#my-form',function(event) {
+      event.preventDefault();  // Prevent the form from submitting normally
+     
+    
+      // Send an AJAX request to the server
+      $.ajax({
+        type: 'POST',
+        url: '{% url "reports" %}',  // Replace with the actual URL of your Django view
+        data: $(this).serialize(),  // Serialize the form data
+        beforeSend: function(){
+        },
+        success: function(response) {
+          window.location.reload()
+        }, 
+        error: function(error){
+          if(error.status === 400){
+            console.log(error)
+            $.each(error.responseJSON.errors, function (key, value) {
+              var name = $(`[name=${key}]`)
+              var fielderror = value[0]
+              if ( name.parent().children("div").is( ".field_error" )) {
+                  return false;
+              }else{
+                  name.parent().children(':text, input[type=number], #id_items, #id_vendor, #id_stockin, #id_stockout').addClass('is-invalid').parent().append(`<div class='text-danger field_error '>* ${fielderror}</div>`);                
+              }
+            });
+          }
+        }
+      });
+    });
+  });
+
+</script>
 {% endblock %}

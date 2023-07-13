@@ -2,15 +2,15 @@
 {% load static %}
 
 {% block css_files %}
-  <link rel="stylesheet" href="{% static 'shop/reports.css' %}" />
+  <link rel="stylesheet" href="{% static 'shop/update.css' %}" />
 {% endblock %}
 
 {% block content %}
-<section id="comment-form">
 <form action="" method="POST">
   {% csrf_token %}
+   <div class="form-control {% if form.errors %}invalid{% endif %}">
   {{ form.as_p }}
   <button type="submit" class="btn btn-outline-primary" value="Update">Update</button>
+</div>
   </form>
-  </section>
 {% endblock %}

@@ -6,7 +6,6 @@ from django.contrib.auth.admin import UserAdmin
 from .forms import UserCreationForm, UserChangeForm
 
 
-
 # Register your models here.
 
 class UserAdmin(UserAdmin):
@@ -15,31 +14,39 @@ class UserAdmin(UserAdmin):
     model = User
     list_display = ["email", "username"]
     # fieldsets = UserAdmin.fieldsets + ((None, {"fields": ["email"]}),)
-    
+
 
 class UsersRoleData(admin.ModelAdmin):
     list_display = ("user", "designation", "account", "sale")
 
+
 class ItemsList(admin.ModelAdmin):
-    list_display = ("type", "amount")
+    list_display = ("name", "type", "amount")
+
 
 class TypeList(admin.ModelAdmin):
     list_display = ("type",)
 
+
 class ComapnyData(admin.ModelAdmin):
     list_display = ("brand_name", "phone", "address")
 
+
 class VendorsData(admin.ModelAdmin):
-    list_display = ("name", "address", "email", "items", "company")
+    list_display = ("name", "address", "email", "company")
+
 
 class StockInData(admin.ModelAdmin):
     list_display = ("vendor", "items")
 
+
 class StockOutData(admin.ModelAdmin):
     list_display = ("vendor", "items")
 
+
 class ReportsData(admin.ModelAdmin):
     list_display = ("vendor", "items", "stockin", "stockout")
+
 
 class BookingData(admin.ModelAdmin):
     list_display = ("items", "price")

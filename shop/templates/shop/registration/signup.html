@@ -1,14 +1,22 @@
 {% extends 'shop/base/base.html' %}
+{% load static %}
 
 {% block title %}
   Sign Up
 {% endblock %}
 
+{% block css_files %}
+  <link rel="stylesheet" href="{% static 'shop/login.css' %}" />
+{% endblock %}
+
+
 {% block content %}
   <h2>Sign Up</h2>
   <form action="{% url 'login' %}" method="post">
     {% csrf_token %}
+    <div class="form-control {% if form.errors %}invalid{% endif %}">
     {{ form.as_p }}
     <button type="submit">Sign Up</button>
+    </div>
   </form>
 {% endblock %}

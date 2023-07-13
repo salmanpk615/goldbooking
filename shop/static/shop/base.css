@@ -1,47 +1,265 @@
-body {
-  font-family: "Lato", sans-serif;
+@import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: "Montserrat", sans-serif;
 }
 
-.sidenav {
-  height: 100%; /* Full-height: remove this if you want "auto" height */
-  width: 250px; /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  /* {#background-color: whitesmoke;#} */
-  overflow-x: hidden; /* Disable horizontal scroll */
-  padding-top: 20px;
+.wrapper {
+  width: 100%;
+  height: 100%;
 }
-/* The navigation menu links */
-.sidenav a {
-  padding: 3px;
-  text-decoration: none;
-  font-size: 19px;
-  color: #3b7dc0;
+
+.top_navbar {
+  background: #80cbc4;
+  height: 60px;
+  display: flex;
+  position: fixed;
+  width: 100%;
+  top: 0;
+}
+
+.top_navbar .hamburger {
+  width: 80px;
+  background: #004d40;
+  position: relative;
+  font-size: 28px;
+}
+
+.top_navbar .hamburger .hamburger__inner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  width: 40px;
+  height: 20px;
+}
+
+.top_navbar .hamburger__inner > div {
+  width: 30px;
+  height: 2px;
+  background: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.top_navbar .hamburger div.two {
+  top: 10px;
+  width: 40px;
+}
+
+.top_navbar .hamburger div.three {
+  top: 20px;
+}
+
+.top_navbar .menu {
+  width: calc(100% - 80px);
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.top_navbar .menu .logo {
+  color: #004d40;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.top_navbar .menu .right_menu .login {
+  margin-left: -15rem;
+  margin-top: 1rem;
+  margin-bottom: -2rem;
+}
+
+.top_navbar .menu .right_menu .login h5 {
+  margin-left: 8rem;
+  margin-top: 1rem;
+  margin-bottom: -2rem;
+}
+
+.top_navbar .menu .right_menu .login button {
+  font: inherit;
+  background-color: white;
+  color: #390281;
+  border: 1px solid white;
+  padding: 0.5rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.top_navbar .menu .right_menu .login button:hover,
+.top_navbar .menu .right_menu .login button:active {
+  background-color: yellow;
+  border-color: #4f0ba7;
+}
+
+.top_navbar .menu .right_menu ul {
+  display: flex;
+}
+
+.top_navbar .menu .right_menu ul li {
+  position: relative;
+}
+
+.top_navbar .menu .right_menu ul li .fas {
+  font-size: 30px;
+  cursor: pointer;
+  color: #004d40;
+}
+
+.top_navbar .menu .right_menu ul li .profile_dd {
+  position: absolute;
+  top: 35px;
+  right: -10px;
+  background: #fff;
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  padding: 10px 0;
+  width: 180px;
+  border-radius: 3px;
+  display: none;
+  user-select: none;
+}
+
+.top_navbar .menu .right_menu ul li .profile_dd p {
+  margin-top: 0px;
+  margin-bottom: 0rem;
+}
+
+.top_navbar .menu .right_menu ul li .profile_dd.active {
   display: block;
 }
-/* When you mouse over the navigation links, change their color */
-.sidenav a:hover {
-  color: DodgerBlue;
-}
-/* Style page content */
-.main {
-  margin-left: 180px; /* Same as the width of the sidenav */
-  font-size: 20px; /* Increased text to enable scrolling */
-  padding: 10px 10px;
-}
 
-.nb {
-  list-style-type: none;
-  margin: 1rem;
-  padding: 1rem;
-}
-
-ul {
-  margin-left: 1rem;
-}
-a {
+.top_navbar .menu .right_menu ul li .profile_dd .dd_item {
+  padding: 10px;
+  cursor: pointer;
+  color: #004d40;
   text-decoration: none;
-  color: #3b7dc0;
+}
+
+.top_navbar .menu .right_menu ul li .profile_dd .dd_item:hover {
+  background: #e0f2f1;
+}
+
+.top_navbar .menu .right_menu ul li .profile_dd:before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  right: 10px;
+  border: 10px solid;
+  border-color: transparent transparent #fff transparent;
+}
+
+.main_container .sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 225px;
+  height: 100%;
+  background: #004d40;
+  transition: all 0.3s ease;
+}
+
+.main_container .sidebar .sidebar__inner {
+  position: relative;
+}
+
+.main_container .sidebar .profile {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  padding: 20px 0;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.main_container .sidebar .profile .img {
+  padding: 0 18px;
+}
+
+.main_container .sidebar .profile img {
+  width: 45px;
+  border-radius: 50%;
+  margin-top: -1rem;
+}
+
+.main_container .sidebar .profile p:first-child {
+  font-size: 14px;
+  color: #80cbc4;
+  margin-bottom: 3px;
+}
+
+.main_container .container {
+  margin-top: 60px;
+  width: calc(100% - 225px);
+  margin-left: 225px;
+  padding: 30px;
+  transition: all 0.3s ease;
+}
+
+.main_container .sidebar ul li a {
+  color: #fff;
+  font-size: 18px;
+  padding: 15px 54px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  margin-bottom: 1px;
+  transition: all 0.3s ease;
+}
+
+.main_container .sidebar ul li a .icon {
+  margin-right: 15px;
+  font-size: 28px;
+  margin-left: -2rem;
+}
+
+.main_container .sidebar ul li a span {
+  display: inline-block;
+}
+
+.main_container .sidebar ul li a:hover,
+.main_container .sidebar ul li a.active {
+  background: #fff;
+  color: #004d40;
+}
+
+.main_container .container .item {
+  background: #fff;
+  border: 1px solid #e0f2f1;
+  margin-bottom: 30px;
+  padding: 20px;
+  font-size: 14px;
+  line-height: 22px;
+}
+
+/* after adding active class */
+.wrapper.active .sidebar {
+  width: 80px;
+}
+
+.wrapper.active .sidebar ul li a span.title,
+.wrapper.active .profile_info {
+  display: none;
+}
+
+.wrapper.active .main_container .container {
+  width: calc(100% - 80px);
+  margin-left: 80px;
+}
+ul {
+  padding-left: 0 !important;
+}
+
+.credit {
+  margin-top: 8rem;
+  text-decoration: none;
 }

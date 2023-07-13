@@ -1,44 +1,231 @@
+{% load static %}
+{% load mathfilters %}
 <html>
   <head>
     <title>Reports</title>
   </head>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous" />
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
+
+  <link rel="stylesheet" href="{% static 'shop/pdf.css' %}" /> 
+
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>  
   <body>
-    <div class="card">
-      <div class="card-header">
-        <h2>Report</h2>
-      </div>
-      <div class="card-body">
-        {% for item in items %}
-          <p class="card-title">
-            <strong>Slip for:</strong> {{ item.items.type }}
-          </p>
-          <p class="card-text">
-            <strong>Vendor:</strong> {{ item.vendor.name }}
-          </p>
-          <p class="card-text">
-            <strong>Email:</strong> {{ item.vendor.email }}
-          </p>
-          <p class="card-text">
-            <strong>Company:</strong> {{ item.vendor.company.brand_name }}
-          </p>
-          <p class="card-text">
-            <strong>Gross Weight:</strong> {{ item.items.gross_weight }}
-          </p>
-          <p class="card-text">
-            <strong>Net Weight:</strong> {{ item.items.net_weight }}
-          </p>
-          <p class="card-text">
-            <strong>Labour Wastage:</strong> {{ item.items.labour_wastage }}
-          </p>
-          <p class="card-text">
-            <strong>Amount:</strong> {{ item.items.amount }}
-          </p>
-          <p class="card-text">
-            <strong>Qr:</strong> <img src="{{ item.items.qr_code.url }}" alt="{{ item.qr_code }}" />
-          </p>
-        {% endfor %}
+   <div class="container bootdey">
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-1">
+          <div class="widget-box">
+            <div class="widget-header widget-header-large">
+              <h3 class="widget-title grey lighter">
+                <i class="ace-icon fa fa-leaf green"></i>
+                Shopping Receipt
+              </h3>
+
+              <div class="widget-toolbar no-border invoice-info">
+                <span class="invoice-info-label">Invoice:</span>
+                <span class="red">#121212</span>
+
+                <br />
+                <span class="invoice-info-label">Date:</span>
+                <span class="blue">04/04/2014</span>
+              </div>
+
+              <div class="widget-toolbar hidden-480">
+                <a href="#"><i class="ace-icon fa fa-print"></i></a>
+              </div>
+            </div>
+
+            <div class="widget-body">
+              <div class="widget-main padding-24">
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="row">
+                      <div class="col-xs-11 label label-lg label-info arrowed-in arrowed-right">
+                        <b>StockIn Info</b>
+                      </div>
+                    </div>
+
+                    <div>
+                      <ul class="list-unstyled spaced">
+                        {% for item in items %}
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Vendor:
+                          <b class="red">{{ item.stockin.vendor.name }}</b>
+                        </li>
+
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Email:
+                          <b class="red">{{ item.stockin.vendor.email }}</b>
+                        </li>
+
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Company:
+                          <b class="red">{{ item.stockin.vendor.company.brand_name }}</b>
+                        </li>
+
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Address:
+                          <b class="red">{{ item.stockin.vendor.address }}</b>
+                        </li>
+
+                        <li class="divider"></li>
+
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Item Name:
+                          <b class="red">{{ item.stockin.items }}</b>
+                        </li>
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Type:
+                          <b class="red">{{ item.stockin.items.type }}</b>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="space"></div>
+
+                  <div>
+                    <table class="table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th class="center">#</th>
+                          <th>Gross Weight</th>
+                          <th class="hidden-xs">Net Weight</th>
+                          <th class="hidden-480">Labour Wastage</th>
+                          <th>Amount</th>
+                        </tr>
+                      </thead>
+  
+                      <tbody>
+                        {% for item in items %}
+                        <tr>
+                          <td class="center">1</td>
+  
+                          <td>
+                            {{ item.stockin.items.gross_weight }}
+                          </td>
+                          <td class="hidden-xs"> {{ item.stockin.items.net_weight }}</td>
+                          <td class="hidden-480"> {{ item.stockin.items.labour_wastage }}</td>
+                          <td> {{ item.stockin.items.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- /.col -->
+
+                  <div class="col-sm-6">
+                    <div class="row">
+                      <div class="col-xs-11 label label-lg label-success arrowed-in arrowed-right">
+                        <b>StockOut Info</b>
+                      </div>
+                    </div>
+
+                    <div>
+                      <ul class="list-unstyled spaced">
+                        {% for item in items %}
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Vendor:
+                          <b class="red">{{ item.stockout.vendor.name }}</b>
+                        </li>
+
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Email:
+                          <b class="red">{{ item.stockout.vendor.email }}</b>
+                        </li>
+
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Company:
+                          <b class="red">{{ item.stockout.vendor.company.brand_name }}</b>
+                        </li>
+
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Address:
+                          <b class="red">{{ item.stockout.vendor.address }}</b>
+                        </li>
+
+                        <li class="divider"></li>
+
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Item Name:
+                          <b class="red">{{ item.stockout.items }}</b>
+                        </li>
+                        <li>
+                          <i class="ace-icon fa fa-caret-right blue"></i>
+                          Type:
+                          <b class="red">{{ item.stockout.items.type }}</b>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </div>
+                  </div>
+                  <!-- /.col -->
+                </div>
+                <!-- /.row -->
+
+                <div class="space"></div>
+
+                <div>
+                  <table class="table table-striped table-bordered">
+                    <thead>
+                      <tr>
+                        <th class="center">#</th>
+                        <th>Gross Weight</th>
+                        <th class="hidden-xs">Net Weight</th>
+                        <th class="hidden-480">Labour Wastage</th>
+                        <th>Amount</th>
+                      </tr>
+                    </thead>
+
+                    <tbody>
+                      {% for item in items %}
+                      <tr>
+                        <td class="center">1</td>
+
+                        <td>
+                          {{ item.stockout.items.gross_weight }}
+                        </td>
+                        <td class="hidden-xs"> {{ item.stockout.items.net_weight }}</td>
+                        <td class="hidden-480"> {{ item.stockout.items.labour_wastage }}</td>
+                        <td> {{ item.stockout.items.amount }}</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="hr hr8 hr-double hr-dotted"></div>
+
+                <div class="row">
+                  <div class="col-sm-5 pull-right">
+                    <h4 class="pull-right">
+                      Total amount :
+                      {% for item in items %}
+                      <span class="red">Rs.{{ item.stockin.items.amount | add:item.stockout.items.amount }}</span>
+                      {% endfor %}
+                    </h4>
+                  </div>
+                  <div class="col-sm-7 pull-left">Extra Information</div>
+                </div>
+
+                <div class="space-6"></div>
+                <div class="well">Thank you for choosing Ace Company products. We believe you will be satisfied by our services.</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </body>

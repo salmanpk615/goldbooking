@@ -5,13 +5,12 @@ from .models import Items, Vendors, StockIn, StockOut, Reports
 
 
 class UserCreationForm(UserCreationForm):
-
     class Meta:
         model = User
         fields = ("username", "email")
 
-class UserChangeForm(UserChangeForm):
 
+class UserChangeForm(UserChangeForm):
     class Meta:
         model = User
         fields = ("username", "email")
@@ -22,15 +21,18 @@ class ItemForm(forms.ModelForm):
         model = Items
         exclude = ["qr_code"]
 
+
 class ItemUpdateForm(forms.ModelForm):
     class Meta:
-       model = Items
-       fields = '__all__'
+        model = Items
+        fields = '__all__'
+
 
 class VendorForm(forms.ModelForm):
     class Meta:
         model = Vendors
         fields = "__all__"
+
 
 class VendorUpdateForm(forms.ModelForm):
     class Meta:
@@ -43,6 +45,7 @@ class StockinForm(forms.ModelForm):
         model = StockIn
         fields = "__all__"
 
+
 class StockinUpdate(forms.ModelForm):
     class Meta:
         model = StockIn
@@ -53,6 +56,7 @@ class StockoutForm(forms.ModelForm):
     class Meta:
         model = StockOut
         fields = "__all__"
+
 
 class StockoutUpdate(forms.ModelForm):
     class Meta:
@@ -65,10 +69,8 @@ class ReportForm(forms.ModelForm):
         model = Reports
         fields = "__all__"
 
+
 class ReportUpdateForm(forms.ModelForm):
     class Meta:
-       model = Reports
-       fields = '__all__'
-
-
-
+        model = Reports
+        fields = '__all__'

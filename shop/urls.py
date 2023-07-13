@@ -8,7 +8,7 @@ urlpatterns = [
     path('home', views.index, name='home'),
     path('login/',auth_views.LoginView.as_view(template_name='shop/registration/login.html'), name='login'),
     path("signup", views.SignUpView.as_view(), name="signup"),
-    path('logout', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout', auth_views.LogoutView.as_view(template_name='shop/registration/login.html'), name='logout'),
     path('items', views.ItemsView.as_view(), name='items'),
     path('item_delete/<int:pk>', views.ItemDelete.as_view(), name='item_delete'),
     path('item_update/<int:pk>', views.ItemEdit.as_view(), name='item_update'),
@@ -27,5 +27,6 @@ urlpatterns = [
     path('report_update/<int:pk>', views.ReportEdit.as_view(), name='report_update'),
     path('report_delete/<int:pk>', views.ReportDelete.as_view(), name='report_delete'),
     path('pdf/<int:pk>', views.pdf_view, name='pdf'),
-
+    path('detail/<int:pk>', views.DetailView.as_view(), name='detail'),
+    path('item_detail/<int:pk>', views.ItemDetailView.as_view(), name='item_detail'),
 ]

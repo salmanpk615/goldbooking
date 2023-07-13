@@ -6,36 +6,33 @@
 {% endblock %}
 
 {% block css_files %}
-  <link rel="stylesheet" href="{% static 'shop/vendors.css'%}" />
+  <link rel="stylesheet" href="{% static 'shop/items.css'%}" />
 {% endblock %}
 
 {% block content %}
-  <h3 class="text-center">Vendors In this Store</h3>
-  <table class="table center w-50">
+  <h1 class="head">Vendors In this Store</h1>
+  <table class="table w-50">
     <thead class="table-dark">
       <tr>
         <th scope="col">Name</th>
         <th scope="col">Address</th>
         <th scope="col">Email</th>
-        <th scope="col">Items</th>
         <th scope="col">Company</th>
         <th scope="col">Edit</th>
         <th scope="col">Delete</th>
+        <th scope="col"><button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#exampleModal">Add</button></th>
       </tr>
-      <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" style="
-      margin-left: 73.5rem;">Add Vendor</button>
+    
     </thead>
     <tbody>
       {% for vendor in vendors %}
         <tr>
-          <td>{{ vendor.name }}</td>
+          <td><a href="{% url "detail" vendor.id %}">{{ vendor.name }}</td>
+           
           <td>{{ vendor.address }}</td>
           <td>{{ vendor.email }}</td>
-          <td>{{ vendor.items }}</td>
           <td>{{ vendor.company }}</td>
           <td><a class="js-edit btn btn-sm btn-primary" href="{% url 'vendor_update' vendor.id %}">Edit</a></td>
-          {% comment %} <td><a class="js-edit btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editform"
-            data-url="">Edit</a> {% endcomment %}
           <td><a class="js-edit btn btn-sm btn-danger" href="{% url 'vendor_delete' vendor.id %}">Delete</a></td>
      </td>
         </tr>
@@ -52,7 +49,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="add" action="{% url 'vendors' %}" method="POST">
+        <form id="my-form" action="{% url 'vendors' %}" method="POST" novalidate>
           {% csrf_token %}
           {% for form in vendor_form %}
           <div class="form-control {% if form.errors %}invalid{% endif %}">
@@ -69,5 +66,55 @@
     </div>
   </div>
 </div>
+
+{% endblock %}
+
+{% block script %}
+
+<script>
+  $(document).on('hidden.bs.modal', function () {
+    $('.editPassenger').modal('hide')
+    $('#my-form').trigger('reset')
+    $('div .field_error').remove()
+    $('.form-control').removeClass('is-invalid')
+})
+
+  $(function() {
+    $(document).on('submit','#my-form',function(event) {
+      event.preventDefault();  // Prevent the form from submitting normally
+     
+    
+      // Send an AJAX request to the server
+      $.ajax({
+        type: 'POST',
+        url: '{% url "vendors" %}',  // Replace with the actual URL of your Django view
+        data: $(this).serialize(),  // Serialize the form data
+        beforeSend: function(){
+        },
+        success: function(response) {
+          window.location.reload()
+        }, error: function(error){
+          if(error.status === 400){
+            console.log(error)
+            $.each(error.responseJSON.errors, function (key, value) {
+              var name = $(`[name=${key}]`)
+              var fielderror = value[0]
+              if ( name.parent().children("div").is( ".field_error" )) {
+                  return false;
+              }else{
+                  name.parent().children(':text, input[type=number], #id_email, #id_company').addClass('is-invalid').parent().append(`<div class='text-danger field_error '>* ${fielderror}</div>`);                
+              }
+            });
+          }
+          else {
+                        alert("Internal 500 server error.")
+                    }
+        }
+      });
+    });
+  });
+
+</script>
+
 
 {% endblock %}

@@ -1,6 +1,7 @@
-.center {
+.centers {
   display: block;
-  margin-left: auto;
+  margin-left: 27rem;
   margin-right: auto;
-  width: 70%;
+  width: 52rem;
+  margin-top: 0rem;
 }

@@ -1,0 +1,37 @@
+{% extends 'shop/base/base.html' %}
+{% load static %}
+
+{% block title %}
+  Items
+{% endblock %}
+
+{% block css_files %}
+  <link rel="stylesheet" href="{% static 'shop/items.css' %}" />
+{% endblock %}
+
+{% block content %}
+<h3 class="text-center">Items In this Store</h3>
+<table class="table center w-50">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Name</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Fine</th>
+      <th scope="col">Purity</th>
+      <th scope="col">Qr Code</th>
+    </tr>
+    <tbody>
+      {% for item in item %}
+        <tr>
+          <td>{{ item.name }}</td>
+          <td>{{ item.amount }}</td>
+          <td>{{ item.fine }}</td>
+          <td>{{ item.purity }}</td>
+          {% if item.qr_code %}
+          <td><img src="{{ item.qr_code.url}}"  alt="{{ item.qr_code }}" style="width:50px;height:30px;"></td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

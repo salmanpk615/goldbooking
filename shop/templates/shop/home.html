@@ -6,24 +6,11 @@
 {% endblock %}
 
 {% block css_files %}
-<link rel="stylesheet" href="{% static 'shop/index.css' %}" />
+<link rel="stylesheet" href="{% static 'shop/index.css' %}">
 {% endblock %}
 
 {% block content %}
 
-{% comment %} {% if user.is_authenticated %}
-Hi {{ user.username }}!
-<p><a href="{% url 'logout' %}">Log Out</a></p>
-{% else %}
-<p>You are not logged in</p>
-<a href="{% url 'login' %}">Log In</a> |
-<a href="{% url 'signup' %}">Sign Up</a>
-{% endif %} {% endcomment %}
-
-
-
-<img src="{% static "shop/images/jewellary.jpg" %}" alt="Jewellary" class="center"/>
-
-
+<img class="centers" src="{% static "shop/images/jewellary.jpg" %}" alt="Jewellary">
 
 {% endblock %}
