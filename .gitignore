@@ -1,7 +1,9 @@
 .idea
 
+venv
+
 db.sqlite3
 
 uploads/*
 
-venv
+
